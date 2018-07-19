@@ -20,4 +20,12 @@ public class SuccessKilledKey {
     public void setUserPhone(Long userPhone) {
         this.userPhone = userPhone;
     }
+
+    public SuccessKilledKey() {
+    }
+
+    public SuccessKilledKey(Long seckillId, Long userPhone) {
+        this.seckillId = seckillId;
+        this.userPhone = userPhone;
+    }
 }
