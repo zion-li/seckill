@@ -2,14 +2,16 @@ package com.myself.seckill.dao;
 
 
 import com.myself.seckill.entity.SecKill;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.Date;
+import java.util.List;
+
 /**
  * @author zion
  */
-@Mapper
+@Repository
 public interface SecKillDao {
 
     int deleteByPrimaryKey(@Param("seckillId") Long seckillId);
@@ -31,4 +33,10 @@ public interface SecKillDao {
      * @return
      */
     int reduceNumber(@Param("seckilled") long seckilled, @Param("killTime") Date killTime);
+
+    /**
+     * 查询所有秒杀记录
+     * @return
+     */
+    List<SecKill> queryAll(@Param("offset") int offset,@Param("limit") int limit);
 }

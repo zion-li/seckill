@@ -2,14 +2,14 @@ package com.myself.seckill.dao;
 
 import com.myself.seckill.entity.SuccessKilled;
 import com.myself.seckill.entity.SuccessKilledKey;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 /**
  * 记录秒杀购买明细
  * @author zion
  */
-@Mapper
+@Repository
 public interface SuccessKilledDao {
 
 
