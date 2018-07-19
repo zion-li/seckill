@@ -94,7 +94,7 @@
       VALUES (#{seckillId,jdbcType=BIGINT}, #{userPhone,jdbcType=BIGINT})
   </insert>
 
-  <select id="queryByIdWithSeckill">
+  <select id="queryByIdWithSeckill" resultType="com.myself.seckill.entity.SuccessKilled">
     <!--根据id查询SuccessKikked 并携带Seckill实体-->
     <!-- 如何告诉mybatis 把结果映射到 SuccessKilled同时映射Seckill属性-->
     SELECT
@@ -108,9 +108,9 @@
         s.start_time "secKill.start_time",
         s.end_time "secKill.end_time",
         s.create_time "secKill.create_time"
-    FROM  success_killid sk
+    FROM  success_killed sk
     INNER JOIN seckill s ON sk.seckill_id=s.seckill_id
-    WHERE sk.seckill_id=#{seckillId}
+    WHERE sk.seckill_id=#{seckillId} AND sk.user_phone=#{userPhone}
   </select>
 
 </mapper>

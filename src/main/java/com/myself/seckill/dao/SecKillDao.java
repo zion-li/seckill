@@ -3,18 +3,22 @@ package com.myself.seckill.dao;
 
 import com.myself.seckill.entity.SecKill;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
+/**
+ * @author zion
+ */
 @Mapper
 public interface SecKillDao {
 
-    int deleteByPrimaryKey(Long seckillId);
+    int deleteByPrimaryKey(@Param("seckillId") Long seckillId);
 
     int insert(SecKill record);
 
     int insertSelective(SecKill record);
 
-    SecKill selectByPrimaryKey(Long seckillId);
+    SecKill selectByPrimaryKey(@Param("seckillId") Long seckillId);
 
     int updateByPrimaryKeySelective(SecKill record);
 
@@ -26,5 +30,5 @@ public interface SecKillDao {
      * @param killTime
      * @return
      */
-    int reduceNumber(long seckilled, Date killTime);
+    int reduceNumber(@Param("seckilled") long seckilled, @Param("killTime") Date killTime);
 }

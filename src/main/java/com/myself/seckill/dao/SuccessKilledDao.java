@@ -3,9 +3,11 @@ package com.myself.seckill.dao;
 import com.myself.seckill.entity.SuccessKilled;
 import com.myself.seckill.entity.SuccessKilledKey;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 记录秒杀购买明细
+ * @author zion
  */
 @Mapper
 public interface SuccessKilledDao {
@@ -30,5 +32,5 @@ public interface SuccessKilledDao {
 
     int insertSuccessKilled(SuccessKilledKey record);
 
-    SuccessKilled queryByIdWithSeckill(long seckillId);
+    SuccessKilled queryByIdWithSeckill(@Param("seckillId") long seckillId,@Param("userPhone") long userPhone);
 }

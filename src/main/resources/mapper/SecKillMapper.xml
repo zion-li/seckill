@@ -118,7 +118,7 @@
     SET
       number=number-1
     where
-      seckill_id = #{seckillId}
+      seckill_id = #{seckilled}
       AND start_time <![CDATA[ <= ]]> #{killTime}
       AND end_time >= #{killTime}
       and number >0
