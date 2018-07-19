@@ -124,4 +124,11 @@
       and number >0
   </update>
 
+  <select id="queryAll" resultType="com.myself.seckill.entity.SecKill">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM seckill
+    LIMIT #{offset},#{limit}
+  </select>
+
 </mapper>
