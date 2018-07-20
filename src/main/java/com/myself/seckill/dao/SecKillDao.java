@@ -2,8 +2,8 @@ package com.myself.seckill.dao;
 
 
 import com.myself.seckill.entity.SecKill;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author zion
  */
-@Repository
+@Mapper
 public interface SecKillDao {
 
     int deleteByPrimaryKey(@Param("seckillId") Long seckillId);

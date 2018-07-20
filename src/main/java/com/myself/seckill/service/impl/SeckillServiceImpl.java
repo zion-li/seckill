@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -39,8 +40,8 @@ public class SeckillServiceImpl implements SeckillService {
     private SuccessKilledDao successKilledDao;
 
     @Override
-    public List<SecKill> getSeckillList() {
-        return secKillDao.queryAll(0, 4);
+    public List<SecKill> getSeckillList(int offset, int limit) {
+        return secKillDao.queryAll(offset, 4);
     }
 
     @Override
@@ -71,7 +72,21 @@ public class SeckillServiceImpl implements SeckillService {
         return MD5Util.MD5(base);
     }
 
+    /**
+     * 使用注解控制事务。
+     * 保证事务尽可能短的执行，不要穿插其他网络操作 prc/http或者玻璃到事务的方法外部。
+     * 不是所有的方法都需要事务，
+     *
+     * @param seckillId 产品ID
+     * @param userPhone 用户身份
+     * @param md5       规则校验，不正确就拒绝执行秒杀
+     * @return
+     * @throws RepeatKillException
+     * @throws SeckillCloseException
+     * @throws SeckillException
+     */
     @Override
+    @Transactional
     public SeckillExecution executeSeckill(long seckillId, long userPhone, String md5) throws RepeatKillException, SeckillCloseException, SeckillException {
         //MD5判断
         if (md5 == null || !md5.equals(getMd5(seckillId))) {
