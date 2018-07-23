@@ -128,7 +128,6 @@
     SELECT
     <include refid="Base_Column_List"/>
     FROM seckill
-    LIMIT #{offset},#{limit}
   </select>
 
 </mapper>

@@ -40,8 +40,8 @@ public class SeckillServiceImpl implements SeckillService {
     private SuccessKilledDao successKilledDao;
 
     @Override
-    public List<SecKill> getSeckillList(int offset, int limit) {
-        return secKillDao.queryAll(offset, 4);
+    public List<SecKill> getSeckillList() {
+        return secKillDao.queryAll();
     }
 
     @Override

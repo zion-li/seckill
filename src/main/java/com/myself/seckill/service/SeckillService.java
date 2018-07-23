@@ -23,7 +23,7 @@ public interface SeckillService {
      *
      * @return
      */
-    List<SecKill> getSeckillList(int offset,int limit);
+    List<SecKill> getSeckillList();
 
     /**
      * 查询单个秒杀记录

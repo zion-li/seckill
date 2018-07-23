@@ -38,5 +38,5 @@ public interface SecKillDao {
      * 查询所有秒杀记录
      * @return
      */
-    List<SecKill> queryAll(@Param("offset") int offset,@Param("limit") int limit);
+    List<SecKill> queryAll();
 }

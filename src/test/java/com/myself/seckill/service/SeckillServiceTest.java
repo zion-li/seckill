@@ -24,7 +24,7 @@ public class SeckillServiceTest {
 
     @Test
     public void getSeckillList() throws Exception {
-        List<SecKill> list = seckillService.getSeckillList(0, 111);
+        List<SecKill> list = seckillService.getSeckillList();
         System.out.println(list.toString());
     }
 

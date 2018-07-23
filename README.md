@@ -90,5 +90,29 @@ Spring 默认的事务传播行为是 PROPAGATION_REQUIRED，它适合于绝大�
 注意：
     只有抛出运行期异常时才会回滚
     小心不当的try--catch catch之后spring无法感知异常了就，会出现部分成功部分失败的情况。
+    ######################################################################################
+
+restful规范：
+    GET--查询操作
+    POST--添加、修改操作
+    PUT--修改操作            幂等性：post非幂等性操作  put幂等性操作
+    DELETE--删除操作
+    
+URL： /模块/资源/{标识}/集合......
+    
+spring MVC运行流程：
+    
+    1：client发送请求
+    
+    2：DispatcherServlet 拦截所有的请求
+            默认使用DefaultAnnotationHandlerMapping：用来映射URL，那个URL对应到哪一个具体的handler
+            
+    3:映射完成之后：会使用默认的DefaultAnnotationHandlerAdapter:用来做handler适配工作，最终衔接我们的 controller
+        此处有拦截器也会加入其中
+        
+    4：产出 ModelAndView (/sss/sss/sss/xdfr/...)
+        同时会交互到DispatcherServlet中，
+        
+    5：发现应用的是一个 InteralResourceViewResolver：默认jsp 的view，会把我们的Model和jsp相结合返回用户。
     
 
