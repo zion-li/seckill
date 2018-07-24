@@ -114,5 +114,47 @@ spring MVC运行流程：
         同时会交互到DispatcherServlet中，
         
     5：发现应用的是一个 InteralResourceViewResolver：默认jsp 的view，会把我们的Model和jsp相结合返回用户。
-    
 
+深度优化：完全避免网络延迟，使用存储过程(插入购买明细与减库存全部放在存储过程中，看看就行了)
+    降低行级锁到commit的时间。
+    
+    DELIMITER $$
+    CREATE PROCEDURE `seckill`.`execute_seckill`
+    (in v_seckill_id bitint , in v_phone bigint, in v_kill_time timestamp,out r_result int)
+    
+    BEGIN
+        DECLARE insert_count int default  0;
+        START TRANSACTION;
+            insert ignore into success_killed(seckill_id,user_phone,create_time)
+                value (v_seckill_id,v_phone,v_kill_time);
+            select  roe_count() into insert_count;
+            IF (insert_count=0) THEN
+                ROLLBACK;
+                SET r_result=-1;
+            ELSEIF(insert_count<0) THEN
+                  SET r_result=-2;
+            ELSE
+                UPDATE seckill set num=num-1 where seckill_id=v_seckill_if 
+                        and  end_time>v_kill_time
+                        and start_time<v_kill_time
+                        and number>0
+                select  roe_count() into insert_count; 
+                  IF (insert_count=0) THEN
+                     ROLLBACK;
+                     SET r_result=0;
+                  ELSEIF(insert_count<0) THEN
+                     ROLLBACK;
+                     SET r_result=-2;   
+                  ELSE
+                     COMMIT;
+                     SET r_result=1;
+                  END IF;
+            END IF;
+    END
+    $$
+    DELIMITER ;
+    set @r_result=-3;
+    call execute_seckill(XX,XX,XX,XX);
+    select @r_result;
+
+部署：CDN+ nginx+jetty+redis+mysql
