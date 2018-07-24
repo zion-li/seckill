@@ -88,6 +88,7 @@ public class SeckillServiceImpl implements SeckillService {
      * 使用注解控制事务。
      * 保证事务尽可能短的执行，不要穿插其他网络操作 prc/http或者玻璃到事务的方法外部。
      * 不是所有的方法都需要事务，
+     * 优化，
      *
      * @param seckillId 产品ID
      * @param userPhone 用户身份
@@ -107,17 +108,19 @@ public class SeckillServiceImpl implements SeckillService {
         //执行秒杀逻辑(减库存+记录购买记录)
         Date nowTime = new Date();
         try {
-            int updateCount = secKillDao.reduceNumber(seckillId, nowTime);
-            if (updateCount <= 0) {
-                //没有更新记录,秒杀结束
-                throw new SeckillCloseException("seckill is closed");
+            //减库存成功，记录购买行为
+            int insertCount = successKilledDao.insertSuccessKilled(new SuccessKilledKey(seckillId, userPhone));
+            if (insertCount <= 0) {
+                //重复秒杀
+                throw new RepeatKillException("seckill repeated");
             } else {
-                //减库存成功，记录购买行为
-                int insertCount = successKilledDao.insertSuccessKilled(new SuccessKilledKey(seckillId, userPhone));
-                if (insertCount <= 0) {
-                    //重复秒杀
-                    throw new RepeatKillException("seckill repeated");
+                //减库存，竞争，会有网络延迟与可能出现的GC，如果再insert操作，或延长获取锁的时间
+                int updateCount = secKillDao.reduceNumber(seckillId, nowTime);
+                if (updateCount <= 0) {
+                    //没有更新记录,秒杀结束
+                    throw new SeckillCloseException("seckill is closed");
                 } else {
+                    //秒杀成功
                     SuccessKilled successKilled = successKilledDao.queryByIdWithSeckill(seckillId, userPhone);
                     return new SeckillExecution(seckillId, SeckillStatEnum.SUCCESS, successKilled);
                 }
