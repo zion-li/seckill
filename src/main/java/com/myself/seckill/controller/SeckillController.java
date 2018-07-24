@@ -7,6 +7,7 @@ import com.myself.seckill.entity.SecKill;
 import com.myself.seckill.enums.SeckillStatEnum;
 import com.myself.seckill.exception.RepeatKillException;
 import com.myself.seckill.exception.SeckillCloseException;
+import com.myself.seckill.exception.SeckillException;
 import com.myself.seckill.service.SeckillService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,19 @@ public class SeckillController {
         List<SecKill> list = seckillService.getSeckillList();
         model.addAttribute("list", list);
         return "list";
+    }
+
+    @RequestMapping(name = "/{seckillId}/detail", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public SeckillResult<SecKill> detail(@PathVariable("seckillId") Long seckillId) {
+        if (seckillId == null) {
+            throw new SeckillException("参数不合法");
+        }
+        SecKill secKill = seckillService.getById(seckillId);
+        if (secKill == null) {
+            throw new SeckillException("参数不合法");
+        }
+        return new SeckillResult<>(true, secKill);
     }
 
     /**
@@ -109,12 +123,12 @@ public class SeckillController {
      *
      * @return
      */
-    @RequestMapping(name = "/time/now", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/time/now", method = RequestMethod.GET)
     @ResponseBody
-    public SeckillResult<Long> time() {
+    public SeckillResult<Long> getcurrentTime() {
         Date date = new Date();
         return new SeckillResult(true, date.getTime());
-
     }
+
 
 }
