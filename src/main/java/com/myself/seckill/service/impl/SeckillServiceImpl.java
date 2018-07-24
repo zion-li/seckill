@@ -57,6 +57,7 @@ public class SeckillServiceImpl implements SeckillService {
     @Override
     public Exposer exportSeckillUrl(long seckillId) {
 
+        //这个太简单了，没啥用
         SecKill secKill = redisDao.getSeckill(seckillId);
         if (secKill == null) {
             //缓存
