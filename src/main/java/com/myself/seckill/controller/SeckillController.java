@@ -41,24 +41,15 @@ public class SeckillController {
         return "list";
     }
 
-    @RequestMapping(name = "/{seckillId}/detail", method = RequestMethod.GET)
-    public String detail(@PathVariable("seckillId") Long seckillId, Model model) {
-        if (seckillId == null) {
-            return "redirect:/seckill/list";
-        }
-        SecKill secKill = seckillService.getById(seckillId);
-        if (secKill == null) {
-            return "forward:/seckill/list";
-        }
-        model.addAttribute("seckill", secKill);
-        return "detail";
-    }
-
-    @RequestMapping(name = "/{seckillId}/exposer",
-            method = RequestMethod.POST,
-            produces = "{application/json;charset=UTF-8}")
+    /**
+     * 无法使用CND缓存，但是可以用redis中，集群一秒百万QPS，一致性维护成本低
+     *
+     * @param seckillId
+     * @return
+     */
+    @RequestMapping(value = "/{seckillId}/exposer", produces = "application/json", method = RequestMethod.POST)
     @ResponseBody
-    public SeckillResult<Exposer> exposer(Long seckillId) {
+    public SeckillResult<Exposer> exposer(@PathVariable("seckillId") Long seckillId) {
         SeckillResult<Exposer> result;
         try {
             Exposer exposer = seckillService.exportSeckillUrl(seckillId);
@@ -70,14 +61,30 @@ public class SeckillController {
         return result;
     }
 
+    /**
+     * 架构：redis原子计数器->记录行为消息（MQ）->消息行为落地（mysql）
+     * 强大的运维团队，系统不太稳定。
+     * 无法保证幂等性
+     * 瓶颈：事务（通信网络延迟、GC） 2ms左右---1秒500次的减库存操作。性能指数级别下降
+     * 优化：如何减少行级锁的时间
+     * 一次GC50ms+机房（1300*2）/300000*2/3=20ms
+     * 总时间 1次sql=20ms
+     * 思路：把客户端的逻辑放在mysql服务器，避免网络延迟和Gc影响：
+     * 定制化mysql优化方法   源码级别更改  update \/*auto_commit*\/
+     * 使用存储过程完成
+     *
+     * @param seckillId
+     * @param md5
+     * @param userPhone
+     * @return
+     */
     @RequestMapping(name = "/{seckillId}/{md5}/execution",
             method = RequestMethod.POST,
-            produces = "{application/json;charset=UTF-8}")
+            produces = "application/json;charset=UTF-8")
     @ResponseBody
     public SeckillResult<SeckillExecution> execute(@PathVariable("seckillId") Long seckillId,
                                                    @PathVariable("md5") String md5,
                                                    @CookieValue(value = "userPhone", required = false) Long userPhone) {
-        SeckillResult<SeckillExecution> result;
         if (userPhone == null) {
             return new SeckillResult<>(false, "未注册");
         }
@@ -97,13 +104,17 @@ public class SeckillController {
         }
     }
 
-    @RequestMapping(name = "/time/now",
-            method = RequestMethod.GET,
-            produces = "{application/json;charset=UTF-8}")
+    /**
+     * 访问一次内存10NS，一秒可以访问一亿次，不需要优化
+     *
+     * @return
+     */
+    @RequestMapping(name = "/time/now", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public SeckillResult<Long> time() {
         Date date = new Date();
-        return new SeckillResult(true,date.getTime());
+        return new SeckillResult(true, date.getTime());
+
     }
 
 }

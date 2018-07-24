@@ -51,7 +51,12 @@ public class SeckillServiceImpl implements SeckillService {
 
     @Override
     public Exposer exportSeckillUrl(long seckillId) {
+
+
+        //缓存
         SecKill secKill = secKillDao.selectByPrimaryKey(seckillId);
+
+
         if (secKill == null) {
             return new Exposer(false, seckillId);
         }
