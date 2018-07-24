@@ -2,6 +2,7 @@ package com.myself.seckill.service.impl;
 
 import com.myself.seckill.dao.SecKillDao;
 import com.myself.seckill.dao.SuccessKilledDao;
+import com.myself.seckill.dao.cache.RedisDao;
 import com.myself.seckill.dto.Exposer;
 import com.myself.seckill.dto.SeckillExecution;
 import com.myself.seckill.entity.SecKill;
@@ -39,6 +40,10 @@ public class SeckillServiceImpl implements SeckillService {
     @Autowired
     private SuccessKilledDao successKilledDao;
 
+    @Autowired
+    private RedisDao redisDao;
+
+
     @Override
     public List<SecKill> getSeckillList() {
         return secKillDao.queryAll();
@@ -52,15 +57,16 @@ public class SeckillServiceImpl implements SeckillService {
     @Override
     public Exposer exportSeckillUrl(long seckillId) {
 
-
-        //缓存
-        SecKill secKill = secKillDao.selectByPrimaryKey(seckillId);
-
-
+        SecKill secKill = redisDao.getSeckill(seckillId);
         if (secKill == null) {
-            return new Exposer(false, seckillId);
+            //缓存
+            secKill = secKillDao.selectByPrimaryKey(seckillId);
+            if (secKill == null) {
+                return new Exposer(false, seckillId);
+            } else {
+                redisDao.putSeckill(secKill);
+            }
         }
-
         Date startTime = secKill.getStartTime();
         Date endTime = secKill.getEndTime();
         Date nowTime = new Date();
