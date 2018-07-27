@@ -4,9 +4,6 @@ import com.myself.seckill.dto.Exposer;
 import com.myself.seckill.dto.SeckillExecution;
 import com.myself.seckill.dto.SeckillResult;
 import com.myself.seckill.entity.SecKill;
-import com.myself.seckill.enums.SeckillStatEnum;
-import com.myself.seckill.exception.RepeatKillException;
-import com.myself.seckill.exception.SeckillCloseException;
 import com.myself.seckill.exception.SeckillException;
 import com.myself.seckill.service.SeckillService;
 import org.slf4j.Logger;
@@ -17,7 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * /模块/资源/{id}/细分
@@ -35,11 +31,10 @@ public class SeckillController {
     private SeckillService seckillService;
 
     @RequestMapping(name = "/list", method = RequestMethod.GET)
-    public String list(Model model) {
+    @ResponseBody
+    public SeckillResult<SecKill> list(Model model) {
         //获取列表页
-        List<SecKill> list = seckillService.getSeckillList();
-        model.addAttribute("list", list);
-        return "list";
+        return new SeckillResult<SecKill>(true, seckillService.getSeckillList().toString());
     }
 
     @RequestMapping(name = "/{seckillId}/detail", method = RequestMethod.GET, produces = "application/json")
@@ -64,15 +59,8 @@ public class SeckillController {
     @RequestMapping(value = "/{seckillId}/exposer", produces = "application/json", method = RequestMethod.POST)
     @ResponseBody
     public SeckillResult<Exposer> exposer(@PathVariable("seckillId") Long seckillId) {
-        SeckillResult<Exposer> result;
-        try {
-            Exposer exposer = seckillService.exportSeckillUrl(seckillId);
-            result = new SeckillResult<>(true, exposer);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            result = new SeckillResult<>(false, e.getMessage());
-        }
-        return result;
+        Exposer exposer = seckillService.exportSeckillUrl(seckillId);
+        return new SeckillResult<>(true, exposer);
     }
 
     /**
@@ -102,20 +90,8 @@ public class SeckillController {
         if (userPhone == null) {
             return new SeckillResult<>(false, "未注册");
         }
-        try {
-            SeckillExecution execution = seckillService.executeSeckill(seckillId, userPhone, md5);
-            return new SeckillResult<>(true, execution);
-        } catch (RepeatKillException e1) {
-            SeckillExecution execution = new SeckillExecution(seckillId, SeckillStatEnum.PEPEAT_KILL);
-            return new SeckillResult<>(true, execution);
-        } catch (SeckillCloseException e2) {
-            SeckillExecution execution = new SeckillExecution(seckillId, SeckillStatEnum.END);
-            return new SeckillResult<>(true, execution);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            SeckillExecution execution = new SeckillExecution(seckillId, SeckillStatEnum.INNER_ERROR);
-            return new SeckillResult<>(true, execution);
-        }
+        SeckillExecution execution = seckillService.executeSeckill(seckillId, userPhone, md5);
+        return new SeckillResult<>(true, execution);
     }
 
     /**
@@ -129,6 +105,4 @@ public class SeckillController {
         Date date = new Date();
         return new SeckillResult(true, date.getTime());
     }
-
-
 }
