@@ -7,6 +7,7 @@ import com.myself.seckill.service.UserService;
 import com.myself.seckill.service.impl.UserServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -21,6 +22,7 @@ import java.io.OutputStream;
  * @author Created by zion
  * @Date 2018/7/27.
  */
+@Component
 public class AccessInterceptor extends HandlerInterceptorAdapter {
 
     @Autowired

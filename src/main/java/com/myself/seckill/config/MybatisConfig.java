@@ -2,7 +2,6 @@ package com.myself.seckill.config;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -24,7 +23,6 @@ import org.springframework.transaction.annotation.TransactionManagementConfigure
 
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.util.Properties;
 
 /**
  * Mybatis配置
@@ -36,9 +34,9 @@ import java.util.Properties;
 @AutoConfigureAfter(DatasourceConfig.class)
 @ConfigurationProperties
 @EnableTransactionManagement
-public class MybatisConfiguration implements TransactionManagementConfigurer {
+public class MybatisConfig implements TransactionManagementConfigurer {
 
-    private static Log logger = LogFactory.getLog(MybatisConfiguration.class);
+    private static Log logger = LogFactory.getLog(MybatisConfig.class);
 
     //  配置类型别名
     @Value("${mybatis.typeAliasesPackage}")
