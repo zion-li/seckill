@@ -43,3 +43,12 @@ mybatis:
      typeAliasesPackage: com.myself.seckill.entity
      mapperScanPackage: com.myself.seckill.dao
      configLocation: classpath:mybatis.xml
+
+response:
+  header:
+    allowOrigin: 'http://localhost:8000'
+    allowCredentials: true
+    allowMethods: POST,PUT, GET, OPTIONS, DELETE
+    maxAge: 3600
+    allowHeaders: x-requested-with,content-type
+    characterEncoding: utf-8
