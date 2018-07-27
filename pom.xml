@@ -31,6 +31,7 @@
         <slf4j.version>1.7.25</slf4j.version>
         <logback.version>1.1.11</logback.version>
         <commons.lang.version>2.6</commons.lang.version>
+        <commons.lang3.version>3.4</commons.lang3.version>
         <hibernate.validator.version>6.0.0.Final</hibernate.validator.version>
         <validation.api.version>2.0.0.Final</validation.api.version>
         <lombok.version>1.18.0</lombok.version>
@@ -50,6 +51,11 @@
             <version>${commons.lang.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons.lang3.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
             <version>${hibernate.validator.version}</version>
@@ -65,6 +71,7 @@
             <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
+        <!--加密-->
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
